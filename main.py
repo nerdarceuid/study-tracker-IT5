@@ -19,10 +19,13 @@ class TaskStorage:
         self._next_id += 1
         return task
 
+    def get(self, task_id: int) -> dict | None:
+        return self._tasks.get(task_id)
+
     def list_all(self) -> list[dict]:
         return list(self._tasks.values())
     
-    def get(self, task_id: int) -> dict | None:
+    def replace(self, task_id: int) -> dict | None:
         
         if task_id not in self._tasks:
             return None
