@@ -1,24 +1,23 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException, status
 
-app = FastAPI()
-
-class Book(BaseModel):
-    name: str
-    price: float
-    is_offer: bool | None = None
-
-@app.get("/")
-def read_root(): # getting the root of the file
-    return {"Hello": "Hi"} # this should print/shown in / 
-
-@app.get("/books/{books_id}")
-# Initialize the datatypes and for what I know about | None is that it would return to nothing instead of an error
-def read_book(books_id: int, q: str | None = None):
-    #this should appear on the docs
-    return {"books_id": books_id, "q": q}
+app = FastAPI(title="Study Tracker ni Rhovic API ")
 
 
-@app.put("/books/{books_id}") #the update function here
-def update_book(books_id: int,  books: Book):
-    return {"Book Title": books.name, "Book ID": books_id}
+# Test first for all data access goes through this no database for now
+class TaskStorage:
+    def __init__(self):
+        # fake database maps task id to task dictionary
+        self._tasks: dict[int, dict] = {}
+
+        #increment
+        self._next_id: int = 1
+    
+    def create(self, data: dict) -> dict:
+        #stored task, putting the id last so the user sends their own id then overwrite
+        task = {**data, "id": self._next_id}
+        self._tasks[self._next_id] = task
+        self._next_id += 1
+        return task
+
+    def list_all(self) -> list[dict]:
+        pass
